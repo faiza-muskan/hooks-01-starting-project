@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 
 import IngredientForm from "./IngredientForm";
 import Search from "./Search";
@@ -6,6 +6,33 @@ import IngredientList from "./IngredientList";
 
 const Ingredients = () => {
   const [userIngredient, setUserIngrediant] = useState([]);
+
+  const request = useCallback(async () => {
+    try {
+      const response = await fetch(
+        "https://react-hooks-687cb-default-rtdb.firebaseio.com/ingredients.json"
+      );
+      if (!response.ok) {
+        throw new Error("request failed");
+      }
+      const loadedIngridients = [];
+      const data = await response.json();
+      for (const key in data) {
+        loadedIngridients.push({
+          id: key,
+          title: data[key].title,
+          amount: data[key].amount,
+        });
+      }
+      setUserIngrediant(loadedIngridients);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    request();
+  }, [request]);
 
   const ingredientHandler = async (ingredients) => {
     try {
