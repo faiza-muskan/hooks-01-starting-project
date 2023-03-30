@@ -1,62 +1,61 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 
 import IngredientForm from "./IngredientForm";
 import Search from "./Search";
 import IngredientList from "./IngredientList";
+import UseHttp from "../hooks/Use-http";
 
 const Ingredients = () => {
   const [userIngredient, setUserIngrediant] = useState([]);
+  const { sendRequest: sendIngredients } = UseHttp();
 
-  const request = useCallback(async () => {
-    try {
-      const response = await fetch(
-        "https://react-hooks-687cb-default-rtdb.firebaseio.com/ingredients.json"
-      );
-      if (!response.ok) {
-        throw new Error("request failed");
-      }
-      const loadedIngridients = [];
-      const data = await response.json();
-      for (const key in data) {
-        loadedIngridients.push({
-          id: key,
-          title: data[key].title,
-          amount: data[key].amount,
-        });
-      }
-      setUserIngrediant(loadedIngridients);
-    } catch (error) {
-      console.log(error.message);
-    }
+  const filterIngredientsHandler = useCallback((filterIngredients) => {
+    setUserIngrediant(filterIngredients);
   }, []);
 
-  useEffect(() => {
-    request();
-  }, [request]);
-
-  const ingredientHandler = async (ingredients) => {
-    try {
-      const response = await fetch(
-        "https://react-hooks-687cb-default-rtdb.firebaseio.com/ingredients.json",
-        {
-          method: "POST",
-          body: JSON.stringify(ingredients),
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      if (!response.ok) {
-        throw new Error("did'nt recieve the data");
-      }
-
-      const data = await response.json();
-
-      setUserIngrediant((prev) => {
-        return [...prev, { id: data.name, ...ingredients }];
-      });
-    } catch (error) {
-      console.log(error.message);
-    }
+  const addIngredients = (ingredientText, ingredientData) => {
+    const generateId = ingredientData.name;
+    setUserIngrediant((prev) => {
+      return [...prev, { id: generateId, ...ingredientText }];
+    });
+    console.log(generateId);
   };
+
+  const ingredientHandler = async (ingredientText) => {
+    sendIngredients(
+      {
+        url: "https://react-hooks-687cb-default-rtdb.firebaseio.com/ingredients.json",
+        method: "POST",
+        body: ingredientText,
+        headers: { "Content-Type": "application/json" },
+      },
+      addIngredients.bind(null, ingredientText)
+    );
+  };
+
+  // const ingredientHandler = async (ingredients) => {
+  //   try {
+  //     const response = await fetch(
+  //       "https://react-hooks-687cb-default-rtdb.firebaseio.com/ingredients.json",
+  //       {
+  //         method: "POST",
+  //         body: JSON.stringify(ingredients),
+  //         headers: { "Content-Type": "application/json" },
+  //       }
+  //     );
+  //     if (!response.ok) {
+  //       throw new Error("did'nt recieve the data");
+  //     }
+
+  //     const data = await response.json();
+
+  //     setUserIngrediant((prev) => {
+  //       return [...prev, { id: data.name, ...ingredients }];
+  //     });
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // };
 
   const onRemoveHandler = (id) => {
     setUserIngrediant((prev) => {
@@ -69,7 +68,7 @@ const Ingredients = () => {
       <IngredientForm onAddIngredients={ingredientHandler} />
 
       <section>
-        <Search />
+        <Search onLoadedIngridients={filterIngredientsHandler} />
         <IngredientList
           ingredients={userIngredient}
           onRemoveItem={onRemoveHandler}
