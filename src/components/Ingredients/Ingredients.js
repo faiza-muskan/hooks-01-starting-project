@@ -18,7 +18,6 @@ const Ingredients = () => {
     setUserIngrediant((prev) => {
       return [...prev, { id: generateId, ...ingredientText }];
     });
-    console.log(generateId);
   };
 
   const ingredientHandler = async (ingredientText) => {
@@ -58,9 +57,18 @@ const Ingredients = () => {
   // };
 
   const onRemoveHandler = (id) => {
-    setUserIngrediant((prev) => {
-      return prev.filter((item) => item.id !== id);
-    });
+    const deleteIngridient = () => {
+      setUserIngrediant((prev) => {
+        return prev.filter((item) => item.id !== id);
+      });
+    };
+    sendIngredients(
+      {
+        url: `https://react-hooks-687cb-default-rtdb.firebaseio.com/ingredients/${id}.json`,
+        method: "DELETE",
+      },
+      deleteIngridient
+    );
   };
 
   return (
