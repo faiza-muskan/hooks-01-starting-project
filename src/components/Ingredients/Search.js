@@ -23,15 +23,12 @@ const Search = React.memo((props) => {
               amount: data[key].amount,
             });
           }
-
           onLoadedIngridients(loadedIngridients);
         };
-
         const query =
           enteredFilter.length === 0
             ? ""
             : `?orderBy="title"&equalTo="${enteredFilter}"`;
-
         sendRequest(
           {
             url:
@@ -46,38 +43,6 @@ const Search = React.memo((props) => {
       clearTimeout(timer);
     };
   }, [onLoadedIngridients, sendRequest, enteredFilter]);
-
-  // const fetchData = useCallback(async () => {
-  //   const query =
-  //     enteredFilter.length === 0
-  //       ? ""
-  //       : `?orderBy="title&equalTo="${enteredFilter}`;
-  //   try {
-  //     const response = await fetch(
-  //       "https://react-hooks-687cb-default-rtdb.firebaseio.com/ingredients.json" +
-  //         query
-  //     );
-  //     if (!response.ok) {
-  //       throw new Error("request failed");
-  //     }
-  //     const data = await response.json();
-  //     const loadedIngridients = [];
-  //     for (const key in data) {
-  //       loadedIngridients.push({
-  //         id: key,
-  //         title: data[key].title,
-  //         amount: data[key].amount,
-  //       });
-  //     }
-  //     onLoadedIngridients(loadedIngridients);
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // }, [onLoadedIngridients, enteredFilter]);
-
-  // useEffect(() => {
-  //   fetchData();
-  // }, [fetchData]);
 
   const filterHandler = (e) => {
     setEnteredFilterd(e.target.value);

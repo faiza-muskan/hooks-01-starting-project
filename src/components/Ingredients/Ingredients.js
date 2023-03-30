@@ -32,30 +32,6 @@ const Ingredients = () => {
     );
   };
 
-  // const ingredientHandler = async (ingredients) => {
-  //   try {
-  //     const response = await fetch(
-  //       "https://react-hooks-687cb-default-rtdb.firebaseio.com/ingredients.json",
-  //       {
-  //         method: "POST",
-  //         body: JSON.stringify(ingredients),
-  //         headers: { "Content-Type": "application/json" },
-  //       }
-  //     );
-  //     if (!response.ok) {
-  //       throw new Error("did'nt recieve the data");
-  //     }
-
-  //     const data = await response.json();
-
-  //     setUserIngrediant((prev) => {
-  //       return [...prev, { id: data.name, ...ingredients }];
-  //     });
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // };
-
   const onRemoveHandler = (id) => {
     const deleteIngridient = () => {
       setUserIngrediant((prev) => {
